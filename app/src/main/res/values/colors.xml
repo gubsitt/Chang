@@ -1,0 +1,9 @@
+<resources>
+    <color name="white">#FFFFFF</color>  <!-- สีขาว -->
+    <color name="black">#000000</color>  <!-- สีดำ -->
+    <color name="light_gray">#F5F5F5</color>  <!-- สีเทาอ่อน -->
+    <color name="dark_gray">#212121</color>  <!-- สีเทาเข้ม -->
+    <color name="teal_700">#00796B</color>  <!-- สีเขียวเข้ม -->
+    <color name="red_700">#D32F2F</color>  <!-- สีแดงเข้ม -->
+    <color name="green_700">#388E3C</color>  <!-- สีเขียวเข้ม  -->
+</resources>

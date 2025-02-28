@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Customer name -->
+        <TextView
+            android:id="@+id/tv_customer_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ลูกค้า: -"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+        <!-- Service type -->
+        <TextView
+            android:id="@+id/tv_service_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="บริการ: -"
+            android:textSize="16sp"
+            android:paddingTop="4dp"
+            android:textColor="@color/dark_gray"/>
+
+        <!-- Status -->
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="สถานะ: -"
+            android:textSize="16sp"
+            android:paddingTop="4dp"
+            android:textColor="@color/teal_700"/>
+
+        <!-- Buttons: Cancel, Paid -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:paddingTop="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ยกเลิก"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="@color/red_700"
+                android:layout_marginStart="8dp"
+                android:visibility="gone" />  <!-- Hidden by default -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_paid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ชำระเงินแล้ว"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="@color/green_700"
+                android:layout_marginStart="8dp"
+                android:visibility="gone" />  <!-- Hidden by default -->
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
