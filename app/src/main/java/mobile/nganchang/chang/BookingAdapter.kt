@@ -48,6 +48,10 @@ class BookingAdapter(
                 holder.btnCancel.visibility = View.GONE
                 holder.btnPaid.visibility = View.GONE
             }
+            "canceled" -> {
+                holder.btnCancel.visibility = View.GONE
+                holder.btnPaid.visibility = View.GONE
+            }
         }
 
         // การคลิกปุ่มต่างๆ
@@ -62,6 +66,7 @@ class BookingAdapter(
         return when (status) {
             "pending" -> "⏳ รอการยืนยัน"
             "paid" -> "💰 ชำระเงินแล้ว"
+            "canceled" -> "ยกเลิกการจอง"
             else -> "⚠️ ไม่ทราบสถานะ"
         }
     }
