@@ -5,8 +5,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@drawable/bg_gradient"> <!-- ใช้ Gradient Background -->
+    android:background="@drawable/bg_gradient">
 
+    <!-- ปุ่ม Logout -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ออกจากระบบ"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/red_700"
+        android:layout_gravity="end"
+        android:paddingHorizontal="24dp"
+        android:layout_marginBottom="12dp"
+        app:cornerRadius="12dp"
+        app:icon="@android:drawable/ic_lock_power_off"
+        app:iconPadding="8dp"/>
     <!-- CardView ครอบ Spinner -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

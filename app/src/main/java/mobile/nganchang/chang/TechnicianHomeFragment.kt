@@ -1,16 +1,19 @@
 package mobile.nganchang.chang.technician
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import mobile.nganchang.chang.LoginActivity
 import mobile.nganchang.chang.R
+
 
 class TechnicianHomeFragment : Fragment() {
 
@@ -18,12 +21,13 @@ class TechnicianHomeFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var tvTechnicianName: TextView
     private lateinit var tvStatus: TextView
-    private lateinit var switchAvailable: SwitchMaterial  // ✅ ใช้ SwitchMaterial แทน Switch
+    private lateinit var switchAvailable: SwitchMaterial
+    private lateinit var logoutButton: MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_technician_home, container, false)
 
         auth = FirebaseAuth.getInstance()
@@ -31,7 +35,8 @@ class TechnicianHomeFragment : Fragment() {
 
         tvTechnicianName = view.findViewById(R.id.tv_technician_name)
         tvStatus = view.findViewById(R.id.tv_status)
-        switchAvailable = view.findViewById(R.id.switch_available)  // ✅ ใช้ SwitchMaterial
+        switchAvailable = view.findViewById(R.id.switch_available)
+        logoutButton = view.findViewById(R.id.btn_logout)
 
         val userId = auth.currentUser?.uid
         if (userId != null) {
@@ -63,7 +68,19 @@ class TechnicianHomeFragment : Fragment() {
             }
         }
 
+        // ฟังก์ชัน Logout
+        logoutButton.setOnClickListener {
+            logoutUser()
+        }
+
         return view
+    }
+
+    private fun logoutUser() {
+        auth.signOut() // ออกจากระบบ
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // เคลียร์ Activity stack
+        startActivity(intent)
     }
 
     private fun updateStatusText(isAvailable: Boolean) {
