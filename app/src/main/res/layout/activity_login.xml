@@ -63,7 +63,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="เข้าสู่ระบบ"
+        android:text="เข้าสู่ระบบ "
         android:textColor="@android:color/white"
         app:cornerRadius="16dp"
         android:backgroundTint="@color/blue_500"
