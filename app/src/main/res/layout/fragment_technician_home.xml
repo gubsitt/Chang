@@ -5,16 +5,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/light_gray">
+    android:gravity="center"
+    android:background="@drawable/bg_gradient">
 
     <!-- CardView ครอบข้อมูลช่าง -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="6dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="@color/gray_400"
         android:layout_marginBottom="16dp"
-        android:background="@color/white"
+        app:cardBackgroundColor="@android:color/white"
         android:padding="24dp">
 
         <LinearLayout
@@ -23,6 +26,19 @@
             android:orientation="vertical"
             android:padding="8dp">
 
+            <!-- ไอคอนช่าง -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/circle_background"
+                android:contentDescription="Technician Icon"
+                android:padding="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile" />
+
+            <!-- ชื่อช่าง -->
             <TextView
                 android:id="@+id/tv_technician_name"
                 android:layout_width="wrap_content"
@@ -31,8 +47,11 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center"
                 android:paddingBottom="8dp"/>
 
+            <!-- สถานะ -->
             <TextView
                 android:id="@+id/tv_status"
                 android:layout_width="wrap_content"
@@ -40,6 +59,9 @@
                 android:text="สถานะ: ไม่ว่าง"
                 android:textSize="18sp"
                 android:textColor="@color/red_700"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_gravity="center"
                 android:paddingBottom="12dp"/>
 
             <!-- ใช้ SwitchMaterial แทน Switch -->
@@ -50,7 +72,9 @@
                 android:text="ว่างสำหรับงาน"
                 android:textSize="16sp"
                 android:textColor="@color/black"
-                android:padding="8dp"/>
+                android:padding="12dp"
+                android:layout_gravity="center"
+                app:useMaterialThemeColors="true"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

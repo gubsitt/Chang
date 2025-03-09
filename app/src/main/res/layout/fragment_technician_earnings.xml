@@ -1,32 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="20dp"
+    android:background="@drawable/bg_gradient">
 
-    <!-- Heading: รายได้ของคุณ -->
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Earnings Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="รายได้ของคุณ"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="8dp"
-        android:textColor="@android:color/black"/>
+        android:layout_margin="16dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="8dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.MediumComponent"
+        app:strokeColor="#323131"
+        app:strokeWidth="2dp">
 
-    <!-- Display Total Earnings -->
-    <TextView
-        android:id="@+id/tv_total_earnings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="฿0.00"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_green_dark"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="16dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Icon -->
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:paddingBottom="8dp"
+                android:src="@drawable/ic_money"
+                android:tint="@color/green_700" />
+
+            <!-- Heading: รายได้ของคุณ -->
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="12dp"
+                android:text="รายได้ของคุณ"
+                android:textColor="@android:color/black"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <!-- Display Total Earnings -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_total_earnings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:text="฿0.00"
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>
