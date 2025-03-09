@@ -122,10 +122,10 @@ class HomeFragment : Fragment() {
                     val selectButton = MaterialButton(requireContext()).apply {
                         text = "เลือกช่าง"
                         setPadding(16, 8, 16, 8)
-                        setBackgroundColor(resources.getColor(R.color.teal_700, null)) // ตั้งค่าสีปุ่ม
+                        setBackgroundColor(resources.getColor(R.color.blue_500, null)) // ตั้งค่าสีปุ่ม
                         setTextColor(resources.getColor(android.R.color.white, null)) // ตั้งค่าสีตัวอักษร
                         cornerRadius = 12 // เพิ่มความโค้งมนของปุ่ม
-                        strokeColor = resources.getColorStateList(R.color.teal_700, null) // สีขอบปุ่ม
+                        strokeColor = resources.getColorStateList(R.color.blue_500, null) // สีขอบปุ่ม
                         strokeWidth = 2
                         setOnClickListener {
                             selectTechnician(technicianId, name, workType, price)

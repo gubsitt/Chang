@@ -7,12 +7,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
 import mobile.nganchang.chang.R
 
 class BookingFragment : Fragment() {
@@ -38,6 +36,8 @@ class BookingFragment : Fragment() {
             .get()
             .addOnSuccessListener { result ->
                 bookingsContainer.removeAllViews()
+
+                // ถ้าไม่มีข้อมูล ให้แสดงข้อความ
                 if (result.isEmpty) {
                     val noBookingsTextView = TextView(requireContext()).apply {
                         text = "ไม่มีการจองของคุณ"
@@ -49,63 +49,33 @@ class BookingFragment : Fragment() {
                     return@addOnSuccessListener
                 }
 
+                // วนลูปดึงข้อมูลจาก Firestore และใส่ลงใน Layout
                 for (document in result) {
                     val technicianName = document.getString("technician_name") ?: "ไม่ระบุ"
                     val workType = document.getString("work_type") ?: "ไม่ระบุประเภท"
                     val status = document.getString("status") ?: "pending"
-                    val price = document.getLong("price") ?: 0L // เพิ่มการดึงราคา
-                    val bookingId = document.id // ID ของเอกสาร Firestore
+                    val price = document.getLong("price") ?: 0L
+                    val bookingId = document.id
 
-                    // สร้าง MaterialCardView สำหรับแต่ละการจอง
-                    val cardView = MaterialCardView(requireContext()).apply {
-                        layoutParams = ViewGroup.MarginLayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        ).apply {
-                            setMargins(16, 8, 16, 8)
-                        }
-                        radius = 16f
-                        cardElevation = 6f
-                        strokeWidth = 2
-                        strokeColor = resources.getColor(R.color.teal_700, null)
-                        setPadding(24, 16, 24, 16)
-                    }
+                    // ใช้ item_bookingc.xml แทนการสร้าง CardView ในโค้ด
+                    val bookingView = layoutInflater.inflate(R.layout.item_bookingc, bookingsContainer, false)
 
-                    // Layout สำหรับข้อความ
-                    val layout = LinearLayout(requireContext()).apply {
-                        layoutParams = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                        )
-                        orientation = LinearLayout.VERTICAL
-                    }
+                    // กำหนดค่าจาก Firestore ให้ View
+                    bookingView.findViewById<TextView>(R.id.technician_name).text = "ช่าง: $technicianName"
+                    bookingView.findViewById<TextView>(R.id.work_type).text = "ประเภท: $workType"
+                    bookingView.findViewById<TextView>(R.id.price).text = "ราคา: ฿$price"
+                    bookingView.findViewById<TextView>(R.id.status).text = getStatusText(status)
 
-                    // ข้อความแสดงรายละเอียดการจอง
-                    val textView = TextView(requireContext()).apply {
-                        text = "ช่าง: $technicianName\nประเภท: $workType\nสถานะ: ${getStatusText(status)}\nราคา: ฿$price"
-                        textSize = 16f
-                        setTextColor(resources.getColor(android.R.color.black, null))
-                        setPadding(8, 4, 8, 4)
-                    }
-
-                    layout.addView(textView)
-
-                    // ปุ่มยกเลิกการจอง (ถ้าสถานะยังเป็น pending)
+                    val cancelButton = bookingView.findViewById<MaterialButton>(R.id.cancel_button)
                     if (status == "pending") {
-                        val cancelButton = MaterialButton(requireContext()).apply {
-                            text = "ยกเลิกการจอง"
-                            setBackgroundColor(resources.getColor(R.color.red_700, null))
-                            setTextColor(resources.getColor(android.R.color.white, null))
-                            setPadding(16, 8, 16, 8)
-                            setOnClickListener {
-                                cancelBooking(bookingId)
-                            }
-                        }
-                        layout.addView(cancelButton)
+                        cancelButton.visibility = View.VISIBLE
+                        cancelButton.setOnClickListener { cancelBooking(bookingId) }
+                    } else {
+                        cancelButton.visibility = View.GONE
                     }
 
-                    cardView.addView(layout)
-                    bookingsContainer.addView(cardView)
+                    // เพิ่ม View ลงใน bookingsContainer
+                    bookingsContainer.addView(bookingView)
                 }
             }
             .addOnFailureListener {
@@ -118,7 +88,7 @@ class BookingFragment : Fragment() {
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "ยกเลิกการจองสำเร็จ", Toast.LENGTH_SHORT).show()
-                loadBookings() // โหลดรายการใหม่
+                loadBookings()
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "ไม่สามารถยกเลิกการจองได้", Toast.LENGTH_SHORT).show()
@@ -135,4 +105,3 @@ class BookingFragment : Fragment() {
         }
     }
 }
-

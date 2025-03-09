@@ -1,26 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/light_gray">
+    android:background="@drawable/bg_gradient"> <!-- ใช้พื้นหลัง Gradient -->
 
-    <!-- Payment Details Container (display all booking details) -->
-    <LinearLayout
-        android:id="@+id/payment_container"
+    <!-- Payment Details (CardView) -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="24dp"
-        android:layout_marginBottom="16dp"/>
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="@color/gray_400"
+        app:cardBackgroundColor="@android:color/white"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp">
 
-    <!-- ListView to show all bookings with payment buttons next to each item -->
-    <ListView
-        android:id="@+id/booking_list"
-        android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/payment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="รายละเอียดการชำระเงิน"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:paddingBottom="8dp"/>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/teal_700"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- Placeholder for Payment Details -->
+            <TextView
+                android:id="@+id/tv_payment_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ไม่มีข้อมูลการชำระเงิน"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                android:gravity="center"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Title for Booking List -->
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"/>
+        android:text="รายการการจอง"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:paddingBottom="8dp"/>
+
+    <!-- แทนที่ ListView ด้วย LinearLayout -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/payment_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
+    </ScrollView>
 
 </LinearLayout>

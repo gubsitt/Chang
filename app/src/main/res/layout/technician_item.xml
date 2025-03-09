@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/gray_400"
+    app:cardBackgroundColor="@android:color/white"
+    android:layout_marginBottom="12dp"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- ชื่อช่าง -->
+        <TextView
+            android:id="@+id/technician_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ช่าง: -"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+        <!-- ประเภทงาน -->
+        <TextView
+            android:id="@+id/work_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ประเภทงาน: -"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:paddingTop="4dp"/>
+
+        <!-- ราคา -->
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ราคา: -"
+            android:textSize="16sp"
+            android:textColor="@color/green_700"
+            android:textStyle="bold"
+            android:paddingTop="4dp"/>
+
+        <!-- ปุ่มเลือกช่าง -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/select_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="เลือกช่าง"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_700"
+            android:paddingHorizontal="16dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
