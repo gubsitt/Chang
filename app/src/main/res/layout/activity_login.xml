@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
+    android:background="@drawable/bg_gradient"
     tools:context=".LoginActivity">
 
     <!-- Logo -->
@@ -50,7 +51,7 @@
         android:clickable="true"
         android:focusable="true"
         android:text="ยังไม่มีบัญชี? สมัครสมาชิก"
-        android:textColor="@color/blue_500"
+        android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,15 +64,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="เข้าสู่ระบบ "
-        android:textColor="@android:color/white"
-        app:cornerRadius="16dp"
         android:backgroundTint="@color/blue_500"
+        android:text="เข้าสู่ระบบ"
+        app:cornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_password" />
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_email"

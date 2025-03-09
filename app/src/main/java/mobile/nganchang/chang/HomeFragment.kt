@@ -1,5 +1,7 @@
 package mobile.nganchang.chang.customer
 
+
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import mobile.nganchang.chang.R
+import mobile.nganchang.chang.LoginActivity
 
 class HomeFragment : Fragment() {
 
@@ -30,6 +33,12 @@ class HomeFragment : Fragment() {
         spinnerWorkType = view.findViewById(R.id.spinner_work_type)
         techniciansContainer = view.findViewById(R.id.technicians_container)
 
+        // ค้นหาและเพิ่ม event ให้ปุ่ม logout
+        val btnLogout = view.findViewById<MaterialButton>(R.id.btn_logout)
+        btnLogout.setOnClickListener {
+            logoutUser()
+        }
+
         loadWorkTypes()
 
         spinnerWorkType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -43,6 +52,18 @@ class HomeFragment : Fragment() {
 
         return view
     }
+
+    // ✅ ฟังก์ชัน Logout
+    private fun logoutUser() {
+        auth.signOut() // ออกจากระบบ Firebase
+        Toast.makeText(requireContext(), "ออกจากระบบสำเร็จ", Toast.LENGTH_SHORT).show()
+
+        // ส่งผู้ใช้ไปยัง LoginActivity
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
 
     // ✅ โหลดประเภทงานจาก Firestore
     private fun loadWorkTypes() {
@@ -122,10 +143,10 @@ class HomeFragment : Fragment() {
                     val selectButton = MaterialButton(requireContext()).apply {
                         text = "เลือกช่าง"
                         setPadding(16, 8, 16, 8)
-                        setBackgroundColor(resources.getColor(R.color.teal_700, null)) // ตั้งค่าสีปุ่ม
+                        setBackgroundColor(resources.getColor(R.color.blue_500, null)) // ตั้งค่าสีปุ่ม
                         setTextColor(resources.getColor(android.R.color.white, null)) // ตั้งค่าสีตัวอักษร
                         cornerRadius = 12 // เพิ่มความโค้งมนของปุ่ม
-                        strokeColor = resources.getColorStateList(R.color.teal_700, null) // สีขอบปุ่ม
+                        strokeColor = resources.getColorStateList(R.color.blue_500, null) // สีขอบปุ่ม
                         strokeWidth = 2
                         setOnClickListener {
                             selectTechnician(technicianId, name, workType, price)

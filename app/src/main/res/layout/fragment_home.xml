@@ -5,51 +5,73 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/light_gray"> <!-- เปลี่ยนสีพื้นหลังให้ดูละมุนขึ้น -->
+    android:background="@drawable/bg_gradient">
 
+    <!-- ปุ่ม Logout -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ออกจากระบบ"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/red_700"
+        android:layout_gravity="end"
+        android:paddingHorizontal="24dp"
+        android:layout_marginBottom="12dp"
+        app:cornerRadius="12dp"
+        app:icon="@android:drawable/ic_lock_power_off"
+        app:iconPadding="8dp"/>
     <!-- CardView ครอบ Spinner -->
     <com.google.android.material.card.MaterialCardView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="6dp"
-        android:background="@color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="@color/gray_400"
+        app:cardBackgroundColor="@android:color/white"
         android:layout_marginBottom="16dp">
 
         <Spinner
             android:id="@+id/spinner_work_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:padding="12dp"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"/>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="เลือกช่างที่คุณต้องการ"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginBottom="10dp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:padding="8dp"/>
 
-    <!-- Divider เพิ่มเส้นแบ่ง -->
+    <!-- Divider -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="3dp"
         android:background="@color/teal_700"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="4dp"/>
 
+    <!-- ScrollView สำหรับรายชื่อช่าง -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:background="@android:color/transparent">
 
         <LinearLayout
             android:id="@+id/technicians_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
     </ScrollView>
 
 </LinearLayout>

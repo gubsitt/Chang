@@ -1,6 +1,5 @@
 package mobile.nganchang.chang.customer
 
-import PaymentAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,104 +11,97 @@ import com.google.firebase.firestore.FirebaseFirestore
 import mobile.nganchang.chang.R
 import com.google.android.material.button.MaterialButton
 
-
-
-class PaymentFragment : Fragment(), PaymentAdapter.PaymentCallback {
+class PaymentFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
-    private lateinit var bookingList: ListView
-    private var price: Long = 0L
-    private lateinit var technicianId: String
-    private lateinit var bookingId: String
+    private lateinit var paymentListContainer: LinearLayout
+    private lateinit var tvPaymentInfo: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_payment, container, false)
 
         db = FirebaseFirestore.getInstance()
-        bookingList = view.findViewById(R.id.booking_list)
+        paymentListContainer = view.findViewById(R.id.payment_list_container)
+        tvPaymentInfo = view.findViewById(R.id.tv_payment_info)
 
-        // ใช้ FirebaseAuth เพื่อตรวจสอบว่า user คนนี้ได้ทำการจองหรือไม่
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null) {
-            bookingId = currentUser.uid
-        }
-
-        // โหลดข้อมูลการจ่ายเงิน
+        // โหลดข้อมูลการชำระเงิน
         loadPaymentDetails()
 
         return view
     }
 
     private fun loadPaymentDetails() {
-        // ดึงข้อมูลจาก Firestore โดยตรง
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+
         db.collection("bookings")
-            .whereEqualTo("customer_id", FirebaseAuth.getInstance().currentUser?.uid)
+            .whereEqualTo("customer_id", currentUser.uid)
             .get()
             .addOnSuccessListener { result ->
+                paymentListContainer.removeAllViews()
+
                 if (result.isEmpty) {
-                    Toast.makeText(requireContext(), "ไม่พบข้อมูลการจอง", Toast.LENGTH_SHORT).show()
+                    tvPaymentInfo.visibility = View.VISIBLE
                     return@addOnSuccessListener
                 }
 
-                val bookingDataList = mutableListOf<Map<String, String>>()
+                tvPaymentInfo.visibility = View.GONE
+
                 for (document in result) {
                     val technicianName = document.getString("technician_name") ?: "ไม่ระบุ"
                     val workType = document.getString("work_type") ?: "ไม่ระบุ"
                     val status = document.getString("status") ?: "pending"
-                    price = document.getLong("price") ?: 0L
-                    technicianId = document.getString("technician_id") ?: ""
-                    val bookingDetails = mapOf(
-                        "technician_name" to technicianName,
-                        "work_type" to workType,
-                        "status" to status,
-                        "price" to "฿$price",
-                        "booking_id" to document.id
-                    )
-                    bookingDataList.add(bookingDetails)
-                }
+                    val price = document.getLong("price") ?: 0L
+                    val bookingId = document.id
 
-                // ใช้ PaymentAdapter เพื่อนำข้อมูลมาแสดงใน ListView
-                val adapter = PaymentAdapter(requireContext(), bookingDataList, this)
-                bookingList.adapter = adapter
+                    // Inflate payment_item.xml
+                    val paymentView = layoutInflater.inflate(R.layout.payment_item, paymentListContainer, false)
+
+                    // ตั้งค่าข้อมูลใน UI
+                    paymentView.findViewById<TextView>(R.id.technician_name).text = "ช่าง: $technicianName"
+                    paymentView.findViewById<TextView>(R.id.work_type).text = "ประเภท: $workType"
+                    paymentView.findViewById<TextView>(R.id.price).text = "ราคา: ฿$price"
+                    paymentView.findViewById<TextView>(R.id.status).text = getStatusText(status)
+
+                    val payButton = paymentView.findViewById<MaterialButton>(R.id.pay_button)
+                    if (status == "pending") {
+                        payButton.visibility = View.VISIBLE
+                        payButton.setOnClickListener { initiatePayment(bookingId) }
+                    } else {
+                        payButton.visibility = View.GONE
+                    }
+
+                    // เพิ่ม View ลงใน Container
+                    paymentListContainer.addView(paymentView)
+                }
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "ไม่สามารถโหลดข้อมูลได้", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "โหลดข้อมูลการชำระเงินล้มเหลว", Toast.LENGTH_SHORT).show()
             }
     }
 
-    override fun initiatePayment(selectedBookingId: String) {
-        // อัปเดตสถานะการจองเป็น 'paid'
-        db.collection("bookings").document(selectedBookingId)
+    private fun initiatePayment(bookingId: String) {
+        db.collection("bookings").document(bookingId)
             .update("status", "paid")
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "ชำระเงินสำเร็จ", Toast.LENGTH_SHORT).show()
-                updateTechnicianBalance(selectedBookingId)
+                loadPaymentDetails()
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "การชำระเงินล้มเหลว", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun updateTechnicianBalance(selectedBookingId: String) {
-        // ดึงข้อมูล technicianId จากการจอง
-        db.collection("bookings").document(selectedBookingId)
-            .get()
-            .addOnSuccessListener { document ->
-                technicianId = document.getString("technician_id") ?: ""
-                db.collection("users").document(technicianId)
-                    .update("balance", price)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(), "ยอดเงินของช่างถูกอัปเดต", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(requireContext(), "ไม่สามารถอัปเดตยอดเงินของช่างได้", Toast.LENGTH_SHORT).show()
-                    }
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "ไม่สามารถดึงข้อมูลการจองได้", Toast.LENGTH_SHORT).show()
-            }
+    private fun getStatusText(status: String): String {
+        return when (status) {
+            "pending" -> "⏳ รอการยืนยัน"
+            "confirmed" -> "✅ ยืนยันแล้ว"
+            "paid" -> "💰 ชำระเงินแล้ว"
+            "completed" -> "🎉 เสร็จสิ้น"
+            "canceled" -> "❌ ถูกยกเลิก"
+            else -> status
+        }
     }
 }

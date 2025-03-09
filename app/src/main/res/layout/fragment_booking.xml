@@ -5,35 +5,40 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/light_gray"> <!-- เปลี่ยนพื้นหลังให้ดูสะอาดตา -->
+    android:background="@drawable/bg_gradient">
 
     <!-- หัวข้อ -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="การจองของคุณ"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold"
-        android:layout_marginBottom="12dp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:padding="8dp"/>
 
     <!-- Divider -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="3dp"
         android:background="@color/teal_700"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="4dp"/>
 
+    <!-- ScrollView สำหรับรายการจอง -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:background="@android:color/transparent">
 
         <LinearLayout
             android:id="@+id/bookings_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical"
+            android:paddingBottom="16dp"/>
     </ScrollView>
 
 </LinearLayout>

@@ -1,5 +1,16 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="24dp" android:tint="#000000" android:viewportHeight="24" android:viewportWidth="24" android:width="24dp">
-      
-    <path android:fillColor="@android:color/white" android:pathData="M18,2H6c-1.1,0 -2,0.9 -2,2v16c0,1.1 0.9,2 2,2h12c1.1,0 2,-0.9 2,-2V4c0,-1.1 -0.9,-2 -2,-2zM6,4h5v8l-2.5,-1.5L6,12V4z"/>
-    
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- ปฏิทิน -->
+    <path
+        android:fillColor="@color/black"
+        android:pathData="M6,2V4H4C2.9,4 2,4.9 2,6V20C2,21.1 2.9,22 4,22H20C21.1,22 22,21.1 22,20V6C22,4.9 21.1,4 20,4H18V2H16V4H8V2H6M4,8V6H20V8H4M4,10H20V20H4V10Z"/>
+
+    <!-- เครื่องหมายถูก -->
+    <path
+        android:fillColor="@color/black"
+        android:pathData="M9,16.2L5.8,13L4.4,14.4L9,19L20,8L18.6,6.6L9,16.2Z"/>
 </vector>

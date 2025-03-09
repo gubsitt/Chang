@@ -78,4 +78,18 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- ปุ่ม Logout -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ออกจากระบบ"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/red_700"
+        android:layout_gravity="center"
+        android:paddingHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        app:cornerRadius="12dp"
+        app:icon="@android:drawable/ic_lock_power_off"
+        app:iconPadding="8dp"/>
 </LinearLayout>
