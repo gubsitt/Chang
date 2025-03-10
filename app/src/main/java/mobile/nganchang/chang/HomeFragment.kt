@@ -1,6 +1,5 @@
 package mobile.nganchang.chang.customer
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,8 +11,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import mobile.nganchang.chang.R
 import mobile.nganchang.chang.LoginActivity
+import mobile.nganchang.chang.R
 
 class HomeFragment : Fragment() {
 
@@ -25,7 +24,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
@@ -33,11 +32,8 @@ class HomeFragment : Fragment() {
         spinnerWorkType = view.findViewById(R.id.spinner_work_type)
         techniciansContainer = view.findViewById(R.id.technicians_container)
 
-        // ค้นหาและเพิ่ม event ให้ปุ่ม logout
         val btnLogout = view.findViewById<MaterialButton>(R.id.btn_logout)
-        btnLogout.setOnClickListener {
-            logoutUser()
-        }
+        btnLogout.setOnClickListener { logoutUser() }
 
         loadWorkTypes()
 
@@ -53,35 +49,28 @@ class HomeFragment : Fragment() {
         return view
     }
 
-    // ✅ ฟังก์ชัน Logout
     private fun logoutUser() {
-        auth.signOut() // ออกจากระบบ Firebase
+        auth.signOut()
         Toast.makeText(requireContext(), "ออกจากระบบสำเร็จ", Toast.LENGTH_SHORT).show()
-
-        // ส่งผู้ใช้ไปยัง LoginActivity
-        val intent = Intent(requireContext(), LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
     }
 
-
-    // ✅ โหลดประเภทงานจาก Firestore
     private fun loadWorkTypes() {
         db.collection("work_types").get()
             .addOnSuccessListener { result ->
-                val workTypes = mutableListOf<String>()
-                for (doc in result) {
-                    workTypes.add(doc.getString("name") ?: "")
+                val workTypes = result.mapNotNull { it.getString("name") }
+                if (workTypes.isNotEmpty()) {
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, workTypes)
+                    spinnerWorkType.adapter = adapter
                 }
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, workTypes)
-                spinnerWorkType.adapter = adapter
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "โหลดประเภทงานล้มเหลว", Toast.LENGTH_SHORT).show()
             }
     }
 
-    // ✅ โหลดช่างที่มีทักษะตรงกับประเภทงานที่เลือก
     private fun loadTechnicians(workType: String) {
         techniciansContainer.removeAllViews()
 
@@ -99,9 +88,8 @@ class HomeFragment : Fragment() {
                 for (doc in result) {
                     val name = doc.getString("name") ?: "ไม่ระบุ"
                     val technicianId = doc.id
-                    val price = doc.getString("price")?.toLong() ?: 0L // ใช้การแปลงค่า
+                    val price = doc.get("price")?.toString()?.toLongOrNull() ?: 0L // ✅ ป้องกัน error `price` ไม่ใช่ `Long`
 
-                    // สร้าง CardView สำหรับแต่ละช่าง
                     val cardView = CardView(requireContext()).apply {
                         layoutParams = ViewGroup.MarginLayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -113,7 +101,6 @@ class HomeFragment : Fragment() {
                         cardElevation = 4f
                     }
 
-                    // สร้าง Layout สำหรับปุ่ม
                     val layout = LinearLayout(requireContext()).apply {
                         layoutParams = LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -123,37 +110,32 @@ class HomeFragment : Fragment() {
                         setPadding(24, 16, 24, 16)
                     }
 
-                    // เพิ่มชื่อช่าง
                     val nameTextView = TextView(requireContext()).apply {
                         text = name
                         textSize = 18f
                         setTextColor(resources.getColor(android.R.color.black, null))
                     }
 
-                    // เพิ่มราคาของช่าง
                     val priceTextView = TextView(requireContext()).apply {
                         text = "ราคา: ฿$price"
                         textSize = 16f
                         setTextColor(resources.getColor(android.R.color.black, null))
-                        setPadding(0, 8, 0, 0)  // ตั้งค่า padding: (left, top, right, bottom)
+                        setPadding(0, 8, 0, 0)
                     }
 
-
-                    // ปุ่มเลือกช่าง (ใช้ MaterialButton)
                     val selectButton = MaterialButton(requireContext()).apply {
                         text = "เลือกช่าง"
                         setPadding(16, 8, 16, 8)
-                        setBackgroundColor(resources.getColor(R.color.blue_500, null)) // ตั้งค่าสีปุ่ม
-                        setTextColor(resources.getColor(android.R.color.white, null)) // ตั้งค่าสีตัวอักษร
-                        cornerRadius = 12 // เพิ่มความโค้งมนของปุ่ม
-                        strokeColor = resources.getColorStateList(R.color.blue_500, null) // สีขอบปุ่ม
+                        setBackgroundColor(resources.getColor(R.color.blue_500, null))
+                        setTextColor(resources.getColor(android.R.color.white, null))
+                        cornerRadius = 12
+                        strokeColor = resources.getColorStateList(R.color.blue_500, null)
                         strokeWidth = 2
                         setOnClickListener {
                             selectTechnician(technicianId, name, workType, price)
                         }
                     }
 
-                    // เพิ่ม View เข้า Layout
                     layout.addView(nameTextView)
                     layout.addView(priceTextView)
                     layout.addView(selectButton)
@@ -168,28 +150,50 @@ class HomeFragment : Fragment() {
     }
 
     private fun selectTechnician(technicianId: String, name: String, workType: String, price: Long) {
-        val customerId = FirebaseAuth.getInstance().currentUser?.uid
+        val customerId = auth.currentUser?.uid
         if (customerId == null) {
             Toast.makeText(requireContext(), "เกิดข้อผิดพลาด: ไม่พบผู้ใช้", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val booking = hashMapOf(
-            "customer_id" to customerId,
-            "technician_id" to technicianId,
-            "technician_name" to name,
-            "work_type" to workType,  // ✅ บันทึกประเภทงานของช่าง
-            "price" to price, // ✅ บันทึกราคา
-            "status" to "pending"
-        )
+        db.collection("users").document(customerId).get().addOnSuccessListener { customerDoc ->
+            if (!customerDoc.exists()) {
+                Toast.makeText(requireContext(), "ไม่พบข้อมูลลูกค้า", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
+            }
 
-        db.collection("bookings").add(booking)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "เลือกช่างสำเร็จ!", Toast.LENGTH_SHORT).show()
+            val customerName = customerDoc.getString("name") ?: "ไม่ระบุชื่อ"
+
+            db.collection("users").document(technicianId).get().addOnSuccessListener { technicianDoc ->
+                if (!technicianDoc.exists()) {
+                    Toast.makeText(requireContext(), "ไม่พบข้อมูลช่าง", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+
+                val technicianName = technicianDoc.getString("name") ?: "ไม่ระบุชื่อ"
+
+                val booking = hashMapOf(
+                    "customer_id" to customerId,
+                    "customer_name" to customerName,
+                    "technician_id" to technicianId,
+                    "technician_name" to technicianName,
+                    "work_type" to workType,
+                    "price" to price,
+                    "status" to "pending"
+                )
+
+                db.collection("bookings").add(booking)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "เลือกช่างสำเร็จ!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "บันทึกการจองล้มเหลว", Toast.LENGTH_SHORT).show()
+                    }
+            }.addOnFailureListener {
+                Toast.makeText(requireContext(), "ดึงข้อมูลช่างล้มเหลว", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "บันทึกการจองล้มเหลว", Toast.LENGTH_SHORT).show()
-            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "ดึงข้อมูลลูกค้าล้มเหลว", Toast.LENGTH_SHORT).show()
+        }
     }
-
 }

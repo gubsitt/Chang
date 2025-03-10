@@ -29,44 +29,25 @@ class BookingAdapter(
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
         val booking = bookings[position]
 
-        // แสดงข้อมูลลูกค้าและประเภทบริการ
-        holder.tvCustomerName.text = "ลูกค้า: ${booking["customer_id"]}"
-        holder.tvWorkType.text = "บริการ: ${booking["work_type"]}"
-
-        // แสดงสถานะการจอง
+        holder.tvCustomerName.text = "ลูกค้า: ${booking["customer_name"] ?: "ไม่ระบุ"}"
+        holder.tvWorkType.text = "บริการ: ${booking["work_type"] ?: "ไม่ระบุ"}"
         holder.tvStatus.text = "สถานะ: ${convertStatus(booking["status"] as String)}"
 
         val status = booking["status"] as String
+        holder.btnCancel.visibility = if (status == "pending") View.VISIBLE else View.GONE
+        holder.btnPaid.visibility = if (status == "pending") View.VISIBLE else View.GONE
 
-        // แสดง/ซ่อนปุ่มตามสถานะการจอง
-        when (status) {
-            "pending" -> {
-                holder.btnCancel.visibility = View.VISIBLE
-                holder.btnPaid.visibility = View.VISIBLE
-            }
-            "paid" -> {
-                holder.btnCancel.visibility = View.GONE
-                holder.btnPaid.visibility = View.GONE
-            }
-            "canceled" -> {
-                holder.btnCancel.visibility = View.GONE
-                holder.btnPaid.visibility = View.GONE
-            }
-        }
-
-        // การคลิกปุ่มต่างๆ
         holder.btnCancel.setOnClickListener { onStatusChange(booking, "canceled") }
         holder.btnPaid.setOnClickListener { onStatusChange(booking, "paid") }
     }
 
     override fun getItemCount(): Int = bookings.size
 
-    // แปลงสถานะการจองให้แสดงเป็นข้อความและอีโมจิ
     private fun convertStatus(status: String): String {
         return when (status) {
             "pending" -> "⏳ รอการยืนยัน"
             "paid" -> "💰 ชำระเงินแล้ว"
-            "canceled" -> "ยกเลิกการจอง"
+            "canceled" -> "❌ ถูกยกเลิก"
             else -> "⚠️ ไม่ทราบสถานะ"
         }
     }

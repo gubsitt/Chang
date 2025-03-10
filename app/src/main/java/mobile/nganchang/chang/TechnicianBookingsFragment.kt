@@ -4,21 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
 import mobile.nganchang.chang.R
 
 class TechnicianBookingsFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-    private lateinit var bookingsContainer: LinearLayout
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: BookingAdapter
+    private var bookingsList = mutableListOf<Map<String, Any>>()  // ใช้ List เก็บข้อมูล
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,7 +28,15 @@ class TechnicianBookingsFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
-        bookingsContainer = view.findViewById(R.id.bookings_container)
+
+        recyclerView = view.findViewById(R.id.recycler_view_bookings)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        adapter = BookingAdapter(bookingsList) { booking, status ->
+            updateBookingStatus(booking["id"] as String, status)
+        }
+
+        recyclerView.adapter = adapter
 
         loadBookings()
         return view
@@ -41,64 +49,21 @@ class TechnicianBookingsFragment : Fragment() {
                 .whereEqualTo("technician_id", userId)
                 .get()
                 .addOnSuccessListener { documents ->
-                    bookingsContainer.removeAllViews()
+                    bookingsList.clear() // เคลียร์รายการเก่า
 
                     if (documents.isEmpty) {
-                        val noBookingsTextView = TextView(requireContext()).apply {
-                            text = "ไม่มีการจองของคุณ"
-                            textSize = 18f
-                            setPadding(16, 16, 16, 16)
-                            setTextColor(resources.getColor(android.R.color.darker_gray, null))
-                        }
-                        bookingsContainer.addView(noBookingsTextView)
+                        Toast.makeText(requireContext(), "ไม่มีการจองของคุณ", Toast.LENGTH_SHORT).show()
+                        adapter.notifyDataSetChanged()
                         return@addOnSuccessListener
                     }
 
                     for (document in documents) {
-                        val customerName = document.getString("customer_name") ?: "ไม่ระบุ"
-                        val workType = document.getString("work_type") ?: "ไม่ระบุประเภท"
-                        val status = document.getString("status") ?: "pending"
-                        val bookingId = document.id
-
-                        // Inflate `item_booking.xml`
-                        val bookingView = layoutInflater.inflate(R.layout.item_booking, bookingsContainer, false)
-
-                        // ตั้งค่าข้อมูล
-                        bookingView.findViewById<TextView>(R.id.tv_customer_name).text = "ลูกค้า: $customerName"
-                        bookingView.findViewById<TextView>(R.id.tv_service_type).text = "บริการ: $workType"
-                        bookingView.findViewById<TextView>(R.id.tv_status).text = "สถานะ: ${getStatusText(status)}"
-
-                        val btnCancel = bookingView.findViewById<MaterialButton>(R.id.btn_cancel)
-                        val btnPaid = bookingView.findViewById<MaterialButton>(R.id.btn_paid)
-
-                        // ปรับปุ่มให้แสดงตามสถานะ
-                        when (status) {
-                            "pending" -> {
-                                btnCancel.visibility = View.VISIBLE
-                                btnPaid.visibility = View.GONE
-                                btnCancel.setOnClickListener {
-                                    updateBookingStatus(bookingId, "canceled")
-                                }
-                            }
-                            "confirmed" -> {
-                                btnCancel.visibility = View.VISIBLE
-                                btnPaid.visibility = View.VISIBLE
-                                btnCancel.setOnClickListener {
-                                    updateBookingStatus(bookingId, "canceled")
-                                }
-                                btnPaid.setOnClickListener {
-                                    updateBookingStatus(bookingId, "completed")
-                                }
-                            }
-                            "completed" -> {
-                                btnCancel.visibility = View.GONE
-                                btnPaid.visibility = View.GONE
-                            }
-                        }
-
-                        // เพิ่ม View ลงใน container
-                        bookingsContainer.addView(bookingView)
+                        val bookingData = document.data.toMutableMap()
+                        bookingData["id"] = document.id // เก็บ ID ของ booking ไว้
+                        bookingsList.add(bookingData)
                     }
+
+                    adapter.notifyDataSetChanged() // แจ้ง RecyclerView ว่าข้อมูลเปลี่ยน
                 }
                 .addOnFailureListener {
                     Toast.makeText(requireContext(), "โหลดข้อมูลล้มเหลว", Toast.LENGTH_SHORT).show()
@@ -106,25 +71,15 @@ class TechnicianBookingsFragment : Fragment() {
         }
     }
 
-    private fun updateBookingStatus(bookingId: String, action: String) {
+    private fun updateBookingStatus(bookingId: String, status: String) {
         db.collection("bookings").document(bookingId)
-            .update("status", action)
+            .update("status", status)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "อัปเดตสถานะเป็น $action สำเร็จ!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "อัปเดตสถานะเป็น $status สำเร็จ!", Toast.LENGTH_SHORT).show()
                 loadBookings()
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "อัปเดตสถานะล้มเหลว", Toast.LENGTH_SHORT).show()
             }
-    }
-
-    private fun getStatusText(status: String): String {
-        return when (status) {
-            "pending" -> "⏳ รอการยืนยัน"
-            "confirmed" -> "✅ ยืนยันแล้ว"
-            "completed" -> "🎉 เสร็จสิ้น"
-            "canceled" -> "❌ ถูกยกเลิก"
-            else -> status
-        }
     }
 }

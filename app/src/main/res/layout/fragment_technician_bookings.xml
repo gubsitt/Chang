@@ -25,19 +25,13 @@
         android:background="@color/teal_700"
         android:layout_marginBottom="10dp"/>
 
-    <!-- Container สำหรับการจอง (ใช้ item_booking.xml) -->
-    <ScrollView
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_bookings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
-        android:background="@android:color/transparent">
-
-        <LinearLayout
-            android:id="@+id/bookings_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="16dp"/>
-    </ScrollView>
+        android:background="@android:color/transparent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 </LinearLayout>
