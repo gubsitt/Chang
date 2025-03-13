@@ -1,7 +1,9 @@
 package mobile.nganchang.chang.customer
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,12 +52,21 @@ class HomeFragment : Fragment() {
     }
 
     private fun logoutUser() {
+        val sharedPreferences = requireContext().getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+
         auth.signOut()
+        Log.d("Logout", "User signed out: ${auth.currentUser}") // ตรวจสอบค่า auth
+
         Toast.makeText(requireContext(), "ออกจากระบบสำเร็จ", Toast.LENGTH_SHORT).show()
+
         startActivity(Intent(requireContext(), LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
     }
+
 
     private fun loadWorkTypes() {
         db.collection("work_types").get()

@@ -1,6 +1,8 @@
 package mobile.nganchang.chang
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -15,6 +17,7 @@ import mobile.nganchang.chang.technician.TechnicianMainActivity
 class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +25,10 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        sharedPreferences = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
+
+        // ตรวจสอบว่าเคยล็อกอินไว้หรือไม่
+        checkLoginStatus()
 
         val etEmail = findViewById<EditText>(R.id.et_email)
         val etPassword = findViewById<EditText>(R.id.et_password)
@@ -47,6 +54,9 @@ class LoginActivity : AppCompatActivity() {
                                 .addOnSuccessListener { document ->
                                     if (document.exists()) {
                                         val role = document.getString("role")
+
+                                        // บันทึกข้อมูลลง SharedPreferences
+                                        saveLoginState(userId, role)
 
                                         when (role) {
                                             "customer" -> {
@@ -76,6 +86,32 @@ class LoginActivity : AppCompatActivity() {
 
         tvGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
+            finish()
+        }
+    }
+
+    // ✅ ฟังก์ชันบันทึกข้อมูลการล็อกอินลง SharedPreferences
+    private fun saveLoginState(userId: String, role: String?) {
+        val editor = sharedPreferences.edit()
+        editor.putString("USER_ID", userId)
+        editor.putString("ROLE", role)
+        editor.apply()
+    }
+
+    // ✅ ฟังก์ชันตรวจสอบสถานะการล็อกอิน
+    private fun checkLoginStatus() {
+        val userId = sharedPreferences.getString("USER_ID", null)
+        val role = sharedPreferences.getString("ROLE", null)
+
+        if (userId != null && role != null) {
+            when (role) {
+                "customer" -> {
+                    startActivity(Intent(this, CustomerMainActivity::class.java))
+                }
+                "technician" -> {
+                    startActivity(Intent(this, TechnicianMainActivity::class.java))
+                }
+            }
             finish()
         }
     }
