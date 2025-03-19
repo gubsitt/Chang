@@ -67,7 +67,6 @@ class HomeFragment : Fragment() {
         })
     }
 
-
     private fun loadWorkTypes() {
         db.collection("work_types").get()
             .addOnSuccessListener { result ->
@@ -99,7 +98,9 @@ class HomeFragment : Fragment() {
                 for (doc in result) {
                     val name = doc.getString("name") ?: "ไม่ระบุ"
                     val technicianId = doc.id
-                    val price = doc.get("price")?.toString()?.toLongOrNull() ?: 0L // ✅ ป้องกัน error `price` ไม่ใช่ `Long`
+                    val price = doc.get("price")?.toString()?.toLongOrNull() ?: 0L
+                    val availableDate = doc.getString("available_date") ?: "ไม่ระบุวันที่"
+                    val availableTime = doc.getString("available_time") ?: "ไม่ระบุเวลา"
 
                     val cardView = CardView(requireContext()).apply {
                         layoutParams = ViewGroup.MarginLayoutParams(
@@ -134,6 +135,13 @@ class HomeFragment : Fragment() {
                         setPadding(0, 8, 0, 0)
                     }
 
+                    val availableTextView = TextView(requireContext()).apply {
+                        text = "วันที่ว่าง: $availableDate เวลา: $availableTime"
+                        textSize = 14f
+                        setTextColor(resources.getColor(R.color.textColorSkyBlue, null))
+                        setPadding(0, 8, 0, 0)
+                    }
+
                     val selectButton = MaterialButton(requireContext()).apply {
                         text = "เลือกช่าง"
                         setPadding(16, 8, 16, 8)
@@ -149,6 +157,7 @@ class HomeFragment : Fragment() {
 
                     layout.addView(nameTextView)
                     layout.addView(priceTextView)
+                    layout.addView(availableTextView) // เพิ่มวันที่และเวลาที่ช่างว่าง
                     layout.addView(selectButton)
                     cardView.addView(layout)
 

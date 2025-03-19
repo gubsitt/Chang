@@ -87,7 +87,44 @@
                     android:background="@drawable/edittext_background"
                     android:layout_marginBottom="16dp" />
 
-                <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="วันที่ว่าง"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/et_available_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="เลือกวันที่ว่าง"
+                android:focusable="false"
+                android:padding="12dp"
+                android:background="@drawable/edittext_background"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="เวลาที่ว่าง"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/et_available_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="เลือกเวลาที่ว่าง"
+                android:focusable="false"
+                android:padding="12dp"
+                android:background="@drawable/edittext_background"
+                android:layout_marginBottom="16dp" />
+
+
+            <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="สถานะของคุณ"
