@@ -15,7 +15,6 @@ class PaymentFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var paymentListContainer: LinearLayout
-    private lateinit var tvPaymentInfo: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,7 +24,6 @@ class PaymentFragment : Fragment() {
 
         db = FirebaseFirestore.getInstance()
         paymentListContainer = view.findViewById(R.id.payment_list_container)
-        tvPaymentInfo = view.findViewById(R.id.tv_payment_info)
 
         // โหลดข้อมูลการชำระเงิน
         loadPaymentDetails()
@@ -43,11 +41,14 @@ class PaymentFragment : Fragment() {
                 paymentListContainer.removeAllViews()
 
                 if (result.isEmpty) {
-                    tvPaymentInfo.visibility = View.VISIBLE
+                    // ถ้าไม่มีการจอง ให้แสดงข้อความ "ไม่มีข้อมูลการชำระเงิน"
+                    val noDataMessage = TextView(requireContext())
+                    noDataMessage.text = "ไม่มีข้อมูลการชำระเงิน"
+                    noDataMessage.textSize = 18f
+                    noDataMessage.setTextColor(resources.getColor(android.R.color.darker_gray))
+                    paymentListContainer.addView(noDataMessage)
                     return@addOnSuccessListener
                 }
-
-                tvPaymentInfo.visibility = View.GONE
 
                 for (document in result) {
                     val technicianName = document.getString("technician_name") ?: "ไม่ระบุ"
@@ -56,7 +57,7 @@ class PaymentFragment : Fragment() {
                     val price = document.getLong("price") ?: 0L
                     val bookingId = document.id
 
-                    // Inflate payment_item.xml
+                    // Inflate payment_item.xml (กรอบแสดงรายการการจอง)
                     val paymentView = layoutInflater.inflate(R.layout.payment_item, paymentListContainer, false)
 
                     // ตั้งค่าข้อมูลใน UI

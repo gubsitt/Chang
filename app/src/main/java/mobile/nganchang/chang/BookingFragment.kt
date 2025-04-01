@@ -57,31 +57,34 @@ class BookingFragment : Fragment() {
                     val price = document.getLong("price") ?: 0L
                     val bookingId = document.id
 
-                    // ใช้ item_bookingc.xml แทนการสร้าง CardView ในโค้ด
-                    val bookingView = layoutInflater.inflate(R.layout.item_bookingc, bookingsContainer, false)
+                    // ตรวจสอบว่า Fragment ถูกแนบแล้ว ก่อนเรียกใช้งาน layoutInflater
+                    if (isAdded) {
+                        val bookingView = layoutInflater.inflate(R.layout.item_bookingc, bookingsContainer, false)
 
-                    // กำหนดค่าจาก Firestore ให้ View
-                    bookingView.findViewById<TextView>(R.id.technician_name).text = "ช่าง: $technicianName"
-                    bookingView.findViewById<TextView>(R.id.work_type).text = "ประเภท: $workType"
-                    bookingView.findViewById<TextView>(R.id.price).text = "ราคา: ฿$price"
-                    bookingView.findViewById<TextView>(R.id.status).text = getStatusText(status)
+                        // กำหนดค่าจาก Firestore ให้ View
+                        bookingView.findViewById<TextView>(R.id.technician_name).text = "ช่าง: $technicianName"
+                        bookingView.findViewById<TextView>(R.id.work_type).text = "ประเภท: $workType"
+                        bookingView.findViewById<TextView>(R.id.price).text = "ราคา: ฿$price"
+                        bookingView.findViewById<TextView>(R.id.status).text = getStatusText(status)
 
-                    val cancelButton = bookingView.findViewById<MaterialButton>(R.id.cancel_button)
-                    if (status == "pending") {
-                        cancelButton.visibility = View.VISIBLE
-                        cancelButton.setOnClickListener { cancelBooking(bookingId) }
-                    } else {
-                        cancelButton.visibility = View.GONE
+                        val cancelButton = bookingView.findViewById<MaterialButton>(R.id.cancel_button)
+                        if (status == "pending") {
+                            cancelButton.visibility = View.VISIBLE
+                            cancelButton.setOnClickListener { cancelBooking(bookingId) }
+                        } else {
+                            cancelButton.visibility = View.GONE
+                        }
+
+                        // เพิ่ม View ลงใน bookingsContainer
+                        bookingsContainer.addView(bookingView)
                     }
-
-                    // เพิ่ม View ลงใน bookingsContainer
-                    bookingsContainer.addView(bookingView)
                 }
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "โหลดการจองล้มเหลว", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun cancelBooking(bookingId: String) {
         db.collection("bookings").document(bookingId)

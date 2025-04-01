@@ -72,12 +72,18 @@ class HomeFragment : Fragment() {
             .addOnSuccessListener { result ->
                 val workTypes = result.mapNotNull { it.getString("name") }
                 if (workTypes.isNotEmpty()) {
-                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, workTypes)
-                    spinnerWorkType.adapter = adapter
+                    // ตรวจสอบว่า Fragment ถูกแนบกับ Activity แล้ว
+                    if (isAdded) {
+                        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, workTypes)
+                        spinnerWorkType.adapter = adapter
+                    }
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "โหลดประเภทงานล้มเหลว", Toast.LENGTH_SHORT).show()
+                // ตรวจสอบว่า Fragment ถูกแนบกับ Activity แล้ว
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "โหลดประเภทงานล้มเหลว", Toast.LENGTH_SHORT).show()
+                }
             }
     }
 
@@ -91,83 +97,92 @@ class HomeFragment : Fragment() {
             .get()
             .addOnSuccessListener { result ->
                 techniciansContainer.removeAllViews()
-                if (result.isEmpty) {
-                    Toast.makeText(requireContext(), "ไม่พบช่างในประเภทนี้", Toast.LENGTH_SHORT).show()
-                    return@addOnSuccessListener
-                }
-                for (doc in result) {
-                    val name = doc.getString("name") ?: "ไม่ระบุ"
-                    val technicianId = doc.id
-                    val price = doc.get("price")?.toString()?.toLongOrNull() ?: 0L
-                    val availableDate = doc.getString("available_date") ?: "ไม่ระบุวันที่"
-                    val availableTime = doc.getString("available_time") ?: "ไม่ระบุเวลา"
 
-                    val cardView = CardView(requireContext()).apply {
-                        layoutParams = ViewGroup.MarginLayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        ).apply {
-                            setMargins(16, 8, 16, 8)
+                // ตรวจสอบว่า Fragment ถูกแนบกับ Activity หรือไม่
+                if (isAdded) {
+                    if (result.isEmpty) {
+                        Toast.makeText(requireContext(), "ไม่พบช่างในประเภทนี้", Toast.LENGTH_SHORT).show()
+                        return@addOnSuccessListener
+                    }
+
+                    for (doc in result) {
+                        val name = doc.getString("name") ?: "ไม่ระบุ"
+                        val technicianId = doc.id
+                        val price = doc.get("price")?.toString()?.toLongOrNull() ?: 0L
+                        val availableDate = doc.getString("available_date") ?: "ไม่ระบุวันที่"
+                        val availableTime = doc.getString("available_time") ?: "ไม่ระบุเวลา"
+
+                        val cardView = CardView(requireContext()).apply {
+                            layoutParams = ViewGroup.MarginLayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            ).apply {
+                                setMargins(16, 8, 16, 8)
+                            }
+                            radius = 16f
+                            cardElevation = 4f
                         }
-                        radius = 16f
-                        cardElevation = 4f
-                    }
 
-                    val layout = LinearLayout(requireContext()).apply {
-                        layoutParams = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                        )
-                        orientation = LinearLayout.VERTICAL
-                        setPadding(24, 16, 24, 16)
-                    }
-
-                    val nameTextView = TextView(requireContext()).apply {
-                        text = name
-                        textSize = 18f
-                        setTextColor(resources.getColor(android.R.color.black, null))
-                    }
-
-                    val priceTextView = TextView(requireContext()).apply {
-                        text = "ราคา: ฿$price"
-                        textSize = 16f
-                        setTextColor(resources.getColor(android.R.color.black, null))
-                        setPadding(0, 8, 0, 0)
-                    }
-
-                    val availableTextView = TextView(requireContext()).apply {
-                        text = "วันที่ว่าง: $availableDate เวลา: $availableTime"
-                        textSize = 14f
-                        setTextColor(resources.getColor(R.color.textColorSkyBlue, null))
-                        setPadding(0, 8, 0, 0)
-                    }
-
-                    val selectButton = MaterialButton(requireContext()).apply {
-                        text = "เลือกช่าง"
-                        setPadding(16, 8, 16, 8)
-                        setBackgroundColor(resources.getColor(R.color.blue_500, null))
-                        setTextColor(resources.getColor(android.R.color.white, null))
-                        cornerRadius = 12
-                        strokeColor = resources.getColorStateList(R.color.blue_500, null)
-                        strokeWidth = 2
-                        setOnClickListener {
-                            selectTechnician(technicianId, name, workType, price)
+                        val layout = LinearLayout(requireContext()).apply {
+                            layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                            orientation = LinearLayout.VERTICAL
+                            setPadding(24, 16, 24, 16)
                         }
+
+                        val nameTextView = TextView(requireContext()).apply {
+                            text = name
+                            textSize = 18f
+                            setTextColor(resources.getColor(android.R.color.black, null))
+                        }
+
+                        val priceTextView = TextView(requireContext()).apply {
+                            text = "ราคา: ฿$price"
+                            textSize = 16f
+                            setTextColor(resources.getColor(android.R.color.black, null))
+                            setPadding(0, 8, 0, 0)
+                        }
+
+                        val availableTextView = TextView(requireContext()).apply {
+                            text = "วันที่ว่าง: $availableDate เวลา: $availableTime"
+                            textSize = 14f
+                            setTextColor(resources.getColor(R.color.textColorSkyBlue, null))
+                            setPadding(0, 8, 0, 0)
+                        }
+
+                        val selectButton = MaterialButton(requireContext()).apply {
+                            text = "เลือกช่าง"
+                            setPadding(16, 8, 16, 8)
+                            setBackgroundColor(resources.getColor(R.color.blue_500, null))
+                            setTextColor(resources.getColor(android.R.color.white, null))
+                            cornerRadius = 12
+                            strokeColor = resources.getColorStateList(R.color.blue_500, null)
+                            strokeWidth = 2
+                            setOnClickListener {
+                                selectTechnician(technicianId, name, workType, price)
+                            }
+                        }
+
+                        layout.addView(nameTextView)
+                        layout.addView(priceTextView)
+                        layout.addView(availableTextView) // เพิ่มวันที่และเวลาที่ช่างว่าง
+                        layout.addView(selectButton)
+                        cardView.addView(layout)
+
+                        techniciansContainer.addView(cardView)
                     }
-
-                    layout.addView(nameTextView)
-                    layout.addView(priceTextView)
-                    layout.addView(availableTextView) // เพิ่มวันที่และเวลาที่ช่างว่าง
-                    layout.addView(selectButton)
-                    cardView.addView(layout)
-
-                    techniciansContainer.addView(cardView)
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "โหลดข้อมูลช่างล้มเหลว", Toast.LENGTH_SHORT).show()
+                // ตรวจสอบว่า Fragment ถูกแนบกับ Activity หรือไม่
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "โหลดข้อมูลช่างล้มเหลว", Toast.LENGTH_SHORT).show()
+                }
             }
     }
+
 
     private fun selectTechnician(technicianId: String, name: String, workType: String, price: Long) {
         val customerId = auth.currentUser?.uid

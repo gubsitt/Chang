@@ -101,18 +101,25 @@ class TechnicianEditProfileFragment : Fragment() {
                 }
 
                 if (workTypes.isEmpty()) {
-                    Toast.makeText(requireContext(), "ไม่มีประเภทงานในระบบ", Toast.LENGTH_SHORT).show()
+                    if (isAdded) {
+                        Toast.makeText(requireContext(), "ไม่มีประเภทงานในระบบ", Toast.LENGTH_SHORT).show()
+                    }
                     return@addOnSuccessListener
                 }
 
                 // ใช้ ArrayAdapter ในการตั้งค่าให้กับ Spinner
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, workTypes)
-                spinnerWorkType.adapter = adapter
+                if (isAdded) {
+                    val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, workTypes)
+                    spinnerWorkType.adapter = adapter
+                }
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "โหลดประเภทงานล้มเหลว", Toast.LENGTH_SHORT).show()
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "โหลดประเภทงานล้มเหลว", Toast.LENGTH_SHORT).show()
+                }
             }
     }
+
 
 
     private fun loadProfile() {
@@ -124,14 +131,26 @@ class TechnicianEditProfileFragment : Fragment() {
                 etAvailableDate.setText(doc.getString("available_date"))
                 etAvailableTime.setText(doc.getString("available_time"))
                 switchAvailable.isChecked = doc.getBoolean("available") ?: false
+
                 val workType = doc.getString("work_type") ?: ""
-                val position = (spinnerWorkType.adapter as ArrayAdapter<String>).getPosition(workType)
-                spinnerWorkType.setSelection(position)
+
+                // ตรวจสอบว่า spinnerWorkType มี adapter หรือไม่
+                val adapter = spinnerWorkType.adapter
+                if (adapter is ArrayAdapter<*>) {
+                    val position = (adapter as ArrayAdapter<String>).getPosition(workType)
+
+                    // ตรวจสอบว่าตำแหน่งที่ได้ไม่เป็น -1 (หมายถึงไม่พบข้อมูล)
+                    if (position != -1) {
+                        spinnerWorkType.setSelection(position)
+                    }
+                }
+
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "โหลดข้อมูลล้มเหลว", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun saveProfile() {
         val userId = auth.currentUser?.uid ?: return

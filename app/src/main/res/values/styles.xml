@@ -7,4 +7,16 @@
         <item name="strokeWidth">2dp</item>
         <item name="android:textColor">?attr/colorPrimary</item>
     </style>
+
+    <style name="CircularShapeAppearance">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerFamilyTopLeft">cut</item>
+        <item name="cornerFamilyTopRight">cut</item>
+        <item name="cornerFamilyBottomLeft">cut</item>
+        <item name="cornerFamilyBottomRight">cut</item>
+    </style>
+
+
+
 </resources>
+

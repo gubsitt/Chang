@@ -52,7 +52,9 @@ class TechnicianBookingsFragment : Fragment() {
                     bookingsList.clear() // เคลียร์รายการเก่า
 
                     if (documents.isEmpty) {
-                        Toast.makeText(requireContext(), "ไม่มีการจองของคุณ", Toast.LENGTH_SHORT).show()
+                        if (isAdded) {  // ตรวจสอบว่า Fragment ถูกแนบกับ Activity หรือไม่
+                            Toast.makeText(requireContext(), "ไม่มีการจองของคุณ", Toast.LENGTH_SHORT).show()
+                        }
                         adapter.notifyDataSetChanged()
                         return@addOnSuccessListener
                     }
@@ -63,10 +65,14 @@ class TechnicianBookingsFragment : Fragment() {
                         bookingsList.add(bookingData)
                     }
 
-                    adapter.notifyDataSetChanged() // แจ้ง RecyclerView ว่าข้อมูลเปลี่ยน
+                    if (isAdded) {  // ตรวจสอบว่า Fragment ถูกแนบกับ Activity หรือไม่
+                        adapter.notifyDataSetChanged() // แจ้ง RecyclerView ว่าข้อมูลเปลี่ยน
+                    }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(requireContext(), "โหลดข้อมูลล้มเหลว", Toast.LENGTH_SHORT).show()
+                    if (isAdded) {  // ตรวจสอบว่า Fragment ถูกแนบกับ Activity หรือไม่
+                        Toast.makeText(requireContext(), "โหลดข้อมูลล้มเหลว", Toast.LENGTH_SHORT).show()
+                    }
                 }
         }
     }
@@ -75,11 +81,16 @@ class TechnicianBookingsFragment : Fragment() {
         db.collection("bookings").document(bookingId)
             .update("status", status)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "อัปเดตสถานะเป็น $status สำเร็จ!", Toast.LENGTH_SHORT).show()
+                if (isAdded) {  // ตรวจสอบว่า Fragment ถูกแนบกับ Activity หรือไม่
+                    Toast.makeText(requireContext(), "อัปเดตสถานะเป็น $status สำเร็จ!", Toast.LENGTH_SHORT).show()
+                }
                 loadBookings()
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "อัปเดตสถานะล้มเหลว", Toast.LENGTH_SHORT).show()
+                if (isAdded) {  // ตรวจสอบว่า Fragment ถูกแนบกับ Activity หรือไม่
+                    Toast.makeText(requireContext(), "อัปเดตสถานะล้มเหลว", Toast.LENGTH_SHORT).show()
+                }
             }
     }
+
 }

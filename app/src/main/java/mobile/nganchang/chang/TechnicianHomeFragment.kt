@@ -93,9 +93,14 @@ class TechnicianHomeFragment : Fragment() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
     }
-
     private fun updateStatusText(isAvailable: Boolean) {
-        tvStatus.text = if (isAvailable) "สถานะ: ว่าง" else "สถานะ: ไม่ว่าง"
-        tvStatus.setTextColor(resources.getColor(if (isAvailable) R.color.green_700 else R.color.red_700, null))
+        val context = context
+        if (context != null) {
+            tvStatus.text = if (isAvailable) "สถานะ: ว่าง" else "สถานะ: ไม่ว่าง"
+            tvStatus.setTextColor(context.resources.getColor(if (isAvailable) R.color.green_700 else R.color.red_700, null))
+        } else {
+            Log.e("TechnicianHomeFragment", "Fragment not attached to a context")
+        }
     }
+
 }

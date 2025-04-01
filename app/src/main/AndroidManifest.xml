@@ -3,6 +3,7 @@
     package="mobile.nganchang.chang"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Chang"
+        android:windowSplashScreenAnimatedIcon="@mipmap/ic_launcher"
+        android:windowSplashScreenIconBackgroundColor="@android:color/white"
         tools:targetApi="31">
 
         <!-- ✅ หน้า Login เป็นหน้าแรก -->
